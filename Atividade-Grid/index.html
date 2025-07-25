@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<head>   
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <button id ="mudar-tema">Mudar Tema</button>
+
+  <div class="mural">
+    <div class="bloco titulo">Mural de Blocos</div>
+
+    <div class="bloco identificacao">Nome: Aecio Barbosa <br>Matrícula: 20242tsiig0042</div>
+    <div class="bloco quadrado-1"></div>
+    <div class="bloco quadrado-2"></div>
+    <div class="bloco quadrado-3"></div>
+    <div class="bloco quadrado-4"></div>
+    <div class="bloco quadrado-5"></div>
+  </div>
+
+</body>
+  <script>
+    const btn = document.getElementById("mudar-tema");
+    btn.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+  </script>
+</html>
