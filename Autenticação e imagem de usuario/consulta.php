@@ -67,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <td><?= htmlspecialchars($consulta['descricao']) ?></td>
                 <td>
                     <a href="modificar.php?id_consulta=<?= $consulta['id_consulta'] ?>">Editar</a>
+                    <h1></h1>
                     <a href="consulta.php?delete=<?= $consulta['id_consulta'] ?>" class="excluir-btn" onclick="return confirm('Tem certeza que deseja excluir esta consulta?');">Excluir</a>
                 </td>
             </tr>
