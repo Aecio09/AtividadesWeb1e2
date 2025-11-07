@@ -22,9 +22,9 @@ class Book extends Model
         return $this->belongsTo(Publisher::class);
      }
      public function users()
-   {
-    return $this->belongsToMany(User::class, 'borrowings')
-                ->withPivot('borrowed_at', 'returned_at')
-                ->withTimestamps();
-   }
+     {
+         return $this->belongsToMany(User::class, 'borrowings')
+                     ->withPivot('id', 'borrowed_at', 'returned_at')
+                     ->withTimestamps();
+     }
 }
