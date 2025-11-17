@@ -25,7 +25,7 @@ Route::post('/books/create-select', [BookController::class, 'storeWithSelect'])-
 Route::resource('books', BookController::class)->except(['create', 'store']);
 Route::resource('publishers', App\Http\Controllers\PublisherController::class);
 Route::resource('authors', App\Http\Controllers\AuthorController::class);
-Route::resource('users', App\Http\Controllers\UserController::class)->except(['create', 'store', 'destroy']);
+Route::resource('users', App\Http\Controllers\UserController::class)->except(['create', 'store']);
 
 // Rota para registrar um empréstimo
 Route::post('/books/{book}/borrow', [BorrowingController::class, 'store'])->name('books.borrow');

@@ -29,6 +29,9 @@
                             <td>{{ $author->name }}</td>
                             <td>{{ $author->birth_date ? \Carbon\Carbon::parse($author->birth_date)->format('d/m/Y') : '-' }}</td>
                             <td class="text-end">
+                            <a href="{{ route('authors.show', $author) }}" class="btn btn-info btn-sm">
+                            <i class="bi bi-eye"></i> Visualizar
+                            </a>
                                 <a href="{{ route('authors.edit', $author) }}" class="btn btn-sm btn-secondary">
                                     <i class="bi bi-pencil"></i> Editar
                                 </a>
