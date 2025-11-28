@@ -33,6 +33,18 @@
                     {{ $book->category->name }}
                 </a>
             </p>
+
+            <!-- Badge de status do livro -->
+            @if($book->isAvailable())
+                <span class="badge bg-success">Disponível</span>
+            @else
+                @php
+                    $current = $book->currentBorrowing();
+                @endphp
+                <span class="badge bg-warning text-dark">
+                    Emprestado para {{ $current->name }} desde {{ \Carbon\Carbon::parse($current->pivot->borrowed_at)->format('d/m/Y') }}
+                </span>
+            @endif
         </div>
     </div>
 
@@ -48,22 +60,34 @@
 
 @can('create', App\Models\Book::class)
 <!-- Formulário para Empréstimos -->
-<div class="card mb-4">
+<div class="card mb-4 mt-3">
     <div class="card-header">Registrar Empréstimo</div>
     <div class="card-body">
-        <form action="{{ route('books.borrow', $book) }}" method="POST">
-            @csrf
-            <div class="mb-3">
-                <label for="user_id" class="form-label">Usuário</label>
-                <select class="form-select" id="user_id" name="user_id" required>
-                    <option value="" selected>Selecione um usuário</option>
-                    @foreach($users as $user)
-                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                    @endforeach
-                </select>
+        @if($errors->has('book'))
+            <div class="alert alert-danger">
+                {{ $errors->first('book') }}
             </div>
-            <button type="submit" class="btn btn-success">Registrar Empréstimo</button>
-        </form>
+        @endif
+
+        @if($book->isAvailable())
+            <form action="{{ route('books.borrow', $book) }}" method="POST">
+                @csrf
+                <div class="mb-3">
+                    <label for="user_id" class="form-label">Usuário</label>
+                    <select class="form-select" id="user_id" name="user_id" required>
+                        <option value="" selected>Selecione um usuário</option>
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Registrar Empréstimo</button>
+            </form>
+        @else
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Este livro não está disponível no momento. Aguarde a devolução.
+            </div>
+        @endif
     </div>
 </div>
 @endcan
@@ -94,8 +118,14 @@
                     {{ $user->name }}
                 </a>
             </td>
-            <td>{{ $user->pivot->borrowed_at }}</td>
-            <td>{{ $user->pivot->returned_at ?? 'Em Aberto' }}</td>
+            <td>{{ \Carbon\Carbon::parse($user->pivot->borrowed_at)->format('d/m/Y H:i') }}</td>
+            <td>
+                @if($user->pivot->returned_at)
+                    {{ \Carbon\Carbon::parse($user->pivot->returned_at)->format('d/m/Y H:i') }}
+                @else
+                    <span class="badge bg-warning text-dark">Em Aberto</span>
+                @endif
+            </td>
             @can('create', App\Models\Book::class)
                 <td>
                     @if(is_null($user->pivot->returned_at))

@@ -27,4 +27,26 @@ class Book extends Model
                      ->withPivot('id', 'borrowed_at', 'returned_at')
                      ->withTimestamps();
      }
+
+     /**
+      * Verifica se o livro está disponível para empréstimo
+      * (não tem empréstimo em aberto)
+      */
+     public function isAvailable(): bool
+     {
+         return !$this->users()
+             ->wherePivot('returned_at', null)
+             ->exists();
+     }
+
+     /**
+      * Retorna o empréstimo em aberto (se houver)
+      */
+     public function currentBorrowing()
+     {
+         return $this->users()
+             ->wherePivot('returned_at', null)
+             ->withPivot('borrowed_at')
+             ->first();
+     }
 }

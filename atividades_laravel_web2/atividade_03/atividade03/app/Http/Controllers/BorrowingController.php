@@ -28,6 +28,16 @@ class BorrowingController extends Controller
             'user_id' => 'required|exists:users,id',
         ]);
 
+        // area para verificar disponibilidade de livro
+        if (!$book->isAvailable()) {
+            $currentBorrower = $book->currentBorrowing();
+            return back()->withErrors([
+                'book' => "Este livro já está emprestado para {$currentBorrower->name} desde " . 
+                          \Carbon\Carbon::parse($currentBorrower->pivot->borrowed_at)->format('d/m/Y H:i') . 
+                          ". Aguarde a devolução para realizar um novo empréstimo."
+            ])->withInput();
+        }
+
         Borrowing::create([
             'user_id' => $request->user_id,
             'book_id' => $book->id,
