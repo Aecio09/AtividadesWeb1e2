@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(User::class, 'user');
+    }
+
     public function index()
     {
         $users = User::paginate(10);
@@ -36,7 +41,21 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $user->update($request->only('name', 'email'));
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'role' => 'nullable|in:admin,bibliotecario,cliente',
+        ]);
+
+        $data = $request->only('name', 'email');
+
+        // somente admin pode alterar role
+        if ($request->user()->role === 'admin' && $request->filled('role')) {
+            $data['role'] = $request->role;
+        }
+
+        $user->update($data);
+
         return redirect()->route('users.index')->with('success', 'Usuário atualizado com sucesso.');
     }
 

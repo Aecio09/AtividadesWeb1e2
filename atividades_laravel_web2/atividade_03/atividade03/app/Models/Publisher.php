@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+use App\Models\Book;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -11,7 +11,7 @@ class Publisher extends Model
 
     protected $fillable = ['name', 'address'];
 
-    public function books(){
-        return $this->hasMany(Books::class);
+    public function books() {
+        return $this->hasMany(Book::class);
     }
 }

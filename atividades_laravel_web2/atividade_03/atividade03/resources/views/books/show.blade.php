@@ -9,6 +9,15 @@
             <strong>Título:</strong> {{ $book->title }}
         </div>
         <div class="card-body">
+            <!-- Exibir imagem da capa (se existir) -->
+            @if($book->cover_image)
+                <div class="mb-3">
+                    <img src="{{ asset('storage/'.$book->cover_image) }}" alt="Capa de {{ $book->title }}" style="max-width:300px; height:auto; border:1px solid #ddd; padding:4px;">
+                </div>
+                @else
+                    <img src="{{ asset('storage/images/default-cover.png') }}" alt="Capa padrão" style="width:60px; height:auto; border:1px solid #ddd; padding:2px;">
+            @endif
+
             <p><strong>Autor:</strong>
                 <a href="{{ route('authors.show', $book->author->id) }}">
                     {{ $book->author->name }}
@@ -30,6 +39,14 @@
     <a href="{{ route('books.index') }}" class="btn btn-secondary mt-3">
         <i class="bi bi-arrow-left"></i> Voltar
     </a>
+
+    @can('update', $book)
+        <a href="{{ route('books.edit', $book) }}" class="btn btn-primary mt-3">
+            <i class="bi bi-pencil"></i> Editar
+        </a>
+    @endcan
+
+@can('create', App\Models\Book::class)
 <!-- Formulário para Empréstimos -->
 <div class="card mb-4">
     <div class="card-header">Registrar Empréstimo</div>
@@ -49,6 +66,7 @@
         </form>
     </div>
 </div>
+@endcan
 
 <!-- Histórico de Empréstimos -->
 <div class="card">
@@ -63,7 +81,9 @@
                         <th>Usuário</th>
                         <th>Data de Empréstimo</th>
                         <th>Data de Devolução</th>
-                        <th>Ações</th>
+                        @can('create', App\Models\Book::class)
+                            <th>Ações</th>
+                        @endcan
                     </tr>
                 </thead>
                 <tbody>
@@ -76,15 +96,17 @@
             </td>
             <td>{{ $user->pivot->borrowed_at }}</td>
             <td>{{ $user->pivot->returned_at ?? 'Em Aberto' }}</td>
-            <td>
-                @if(is_null($user->pivot->returned_at))
-                    <form action="{{ route('borrowings.return', $user->pivot->id) }}" method="POST">
-                        @csrf
-                        @method('PATCH')
-                        <button class="btn btn-warning btn-sm">Devolver</button>
-                    </form>
-                @endif
-            </td>
+            @can('create', App\Models\Book::class)
+                <td>
+                    @if(is_null($user->pivot->returned_at))
+                        <form action="{{ route('borrowings.return', $user->pivot->id) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <button class="btn btn-warning btn-sm">Devolver</button>
+                        </form>
+                    @endif
+                </td>
+            @endcan
         </tr>
     @endforeach
 </tbody>
@@ -95,8 +117,4 @@
 
 </div>
 @endsection
-
-
-
->
 

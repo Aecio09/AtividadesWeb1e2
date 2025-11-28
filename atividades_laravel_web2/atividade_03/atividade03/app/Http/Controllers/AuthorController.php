@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class AuthorController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Author::class, 'author');
+    }
+
     public function index()
     {
         $authors = Author::orderBy('name')->get();

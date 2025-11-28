@@ -23,16 +23,22 @@
                         <a href="{{ route('users.show', $user) }}" class="btn btn-info btn-sm">
                             <i class="bi bi-eye"></i> Visualizar
                         </a>
-                        <a href="{{ route('users.edit', $user) }}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-pencil"></i> Editar
-                        </a>
-                        <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline" onsubmit="return confirm('Confirma exclusão?')">
-                            @csrf
+
+                        @can('update', $user)
+                            <a href="{{ route('users.edit', $user) }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                        @endcan
+
+                        @can('delete', $user)
+                            <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline" onsubmit="return confirm('Confirma exclusão?')">
+                                @csrf
                                 @method('DELETE')
                                 <button class="btn btn-sm btn-danger">
                                     <i class="bi bi-trash"></i> Excluir
                                 </button>
-                        </form>
+                            </form>
+                        @endcan
                     </td>
                 </tr>
             @endforeach
@@ -41,6 +47,12 @@
 
     <div class="d-flex justify-content-center">
         {{ $users->links() }}
+    </div>
+
+    <div class="d-flex justify-content-end">
+        <a href="{{ route('users.index') }}" class="btn btn-secondary mt-3">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
     </div>
 </div>
 @endsection

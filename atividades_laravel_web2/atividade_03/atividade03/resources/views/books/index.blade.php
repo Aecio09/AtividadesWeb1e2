@@ -10,17 +10,20 @@
         </div>
     @endif
 
-    <a href="{{ route('books.create.id') }}" class="btn btn-success mb-3">
-        <i class="bi bi-plus"></i> Adicionar Livro (Com ID)
-    </a>
-    <a href="{{ route('books.create.select') }}" class="btn btn-primary mb-3">
-        <i class="bi bi-plus"></i> Adicionar Livro (Com Select)
-    </a>
+    @can('create', App\Models\Book::class)
+        <a href="{{ route('books.create.id') }}" class="btn btn-success mb-3">
+            <i class="bi bi-plus"></i> Adicionar Livro (Com ID)
+        </a>
+        <a href="{{ route('books.create.select') }}" class="btn btn-primary mb-3">
+            <i class="bi bi-plus"></i> Adicionar Livro (Com Select)
+        </a>
+    @endcan
 
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Capa</th> <!-- NOVA COLUNA -->
                 <th>Título</th>
                 <th>Autor</th>
                 <th>Ações</th>
@@ -30,6 +33,13 @@
             @forelse($books as $book)
                 <tr>
                     <td>{{ $book->id }}</td>
+                    <td>
+                        @if($book->cover_image)
+                            <img src="{{ asset('storage/'.$book->cover_image) }}" alt="Capa {{ $book->title }}" style="width:60px; height:auto; border:1px solid #ddd; padding:2px;">
+                        @else
+                            <img src="{{ asset('storage/images/default-cover.png') }}" alt="Capa padrão" style="width:60px; height:auto; border:1px solid #ddd; padding:2px;">
+                        @endif
+                    </td>
                     <td>{{ $book->title }}</td>
                     <td>{{ $book->author->name }}</td>
                     <td>
@@ -38,19 +48,21 @@
                             <i class="bi bi-eye"></i> Visualizar
                         </a>
 
-                        <!-- Botão de Editar -->
-                        <a href="{{ route('books.edit', $book->id) }}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-pencil"></i> Editar
-                        </a>
+                        @can('update', $book)
+                            <a href="{{ route('books.edit', $book->id) }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                        @endcan
 
-                        <!-- Botão de Deletar -->
-                        <form action="{{ route('books.destroy', $book->id) }}" method="POST" style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger btn-sm" onclick="return confirm('Deseja excluir este livro?')">
-                                <i class="bi bi-trash"></i> Deletar
-                            </button>
-                        </form>
+                        @can('delete', $book)
+                            <form action="{{ route('books.destroy', $book->id) }}" method="POST" style="display: inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger btn-sm" onclick="return confirm('Deseja excluir este livro?')">
+                                    <i class="bi bi-trash"></i> Deletar
+                                </button>
+                            </form>
+                        @endcan
                     </td>
                 </tr>
             @empty

@@ -5,9 +5,11 @@
     <div class="d-flex justify-content-between align-items-center my-4">
         <h1>Detalhes da Editora</h1>
         <div>
-            <a href="{{ route('publishers.edit', $publisher) }}" class="btn btn-sm btn-outline-secondary">
-                <i class="bi bi-pencil"></i> Editar
-            </a>
+            @can('update', $publisher)
+                <a href="{{ route('publishers.edit', $publisher) }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+            @endcan
             <a href="{{ route('publishers.index') }}" class="btn btn-sm btn-secondary">
                 <i class="bi bi-arrow-left"></i> Voltar
             </a>

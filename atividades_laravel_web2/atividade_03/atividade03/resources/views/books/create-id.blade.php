@@ -4,7 +4,7 @@
 <div class="container">
     <h1 class="my-4">Adicionar Livro (Com ID)</h1>
 
-    <form action="{{ route('books.store.id') }}" method="POST">
+    <form action="{{ route('books.store.id') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
             <label for="title" class="form-label">Título</label>
@@ -13,6 +13,15 @@
                 <div class="invalid-feedback">
                     {{ $message }}
                 </div>
+            @enderror
+        </div>
+
+        <!-- Novo campo: Capa -->
+        <div class="mb-3">
+            <label for="cover_image" class="form-label">Capa (imagem)</label>
+            <input type="file" class="form-control @error('cover_image') is-invalid @enderror" id="cover_image" name="cover_image" accept="image/*">
+            @error('cover_image')
+                <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
 

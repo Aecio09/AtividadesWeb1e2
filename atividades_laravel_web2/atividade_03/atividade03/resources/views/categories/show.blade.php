@@ -17,5 +17,11 @@
     <a href="{{ route('categories.index') }}" class="btn btn-secondary mt-3">
         <i class="bi bi-arrow-left"></i> Voltar
     </a>
+
+    @can('update', $category)
+        <a href="{{ route('categories.edit', $category) }}" class="btn btn-primary mt-3">
+            <i class="bi bi-pencil"></i> Editar
+        </a>
+    @endcan
 </div>
 @endsection

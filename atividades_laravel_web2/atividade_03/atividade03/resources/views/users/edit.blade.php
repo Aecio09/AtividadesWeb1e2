@@ -18,6 +18,17 @@
             <input type="email" class="form-control" id="email" name="email" value="{{ old('email', $user->email) }}" required>
         </div>
 
+        @if(auth()->user() && auth()->user()->role === 'admin')
+            <div class="mb-3">
+                <label for="role" class="form-label">Papel</label>
+                <select name="role" id="role" class="form-select">
+                    <option value="cliente" {{ $user->role === 'cliente' ? 'selected' : '' }}>cliente</option>
+                    <option value="bibliotecario" {{ $user->role === 'bibliotecario' ? 'selected' : '' }}>bibliotecario</option>
+                    <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>admin</option>
+                </select>
+            </div>
+        @endif
+
         <button type="submit" class="btn btn-success">Salvar</button>
         <a href="{{ route('users.index') }}" class="btn btn-secondary">Cancelar</a>
     </form>

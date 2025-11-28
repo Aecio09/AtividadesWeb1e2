@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class PublisherController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Publisher::class, 'publisher');
+    }
+
     public function index()
     {
         $publishers = Publisher::orderBy('name')->get();

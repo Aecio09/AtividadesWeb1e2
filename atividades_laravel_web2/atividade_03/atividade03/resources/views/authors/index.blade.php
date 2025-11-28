@@ -4,9 +4,11 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center my-4">
         <h1>Autores</h1>
-        <a href="{{ route('authors.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-lg"></i> Novo Autor
-        </a>
+        @can('create', App\Models\Author::class)
+            <a href="{{ route('authors.create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> Novo Autor
+            </a>
+        @endcan
     </div>
 
     @if(session('success'))
@@ -29,19 +31,25 @@
                             <td>{{ $author->name }}</td>
                             <td>{{ $author->birth_date ? \Carbon\Carbon::parse($author->birth_date)->format('d/m/Y') : '-' }}</td>
                             <td class="text-end">
-                            <a href="{{ route('authors.show', $author) }}" class="btn btn-info btn-sm">
-                            <i class="bi bi-eye"></i> Visualizar
-                            </a>
-                                <a href="{{ route('authors.edit', $author) }}" class="btn btn-sm btn-secondary">
-                                    <i class="bi bi-pencil"></i> Editar
+                                <a href="{{ route('authors.show', $author) }}" class="btn btn-info btn-sm">
+                                    <i class="bi bi-eye"></i> Visualizar
                                 </a>
-                                <form action="{{ route('authors.destroy', $author) }}" method="POST" class="d-inline" onsubmit="return confirm('Confirma exclusão?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="bi bi-trash"></i> Excluir
-                                    </button>
-                                </form>
+
+                                @can('update', $author)
+                                    <a href="{{ route('authors.edit', $author) }}" class="btn btn-sm btn-secondary">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </a>
+                                @endcan
+
+                                @can('delete', $author)
+                                    <form action="{{ route('authors.destroy', $author) }}" method="POST" class="d-inline" onsubmit="return confirm('Confirma exclusão?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i> Excluir
+                                        </button>
+                                    </form>
+                                @endcan
                             </td>
                         </tr>
                     @endforeach
