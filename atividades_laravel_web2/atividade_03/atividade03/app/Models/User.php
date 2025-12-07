@@ -36,4 +36,9 @@ class User extends Authenticatable
                     ->withPivot('id', 'borrowed_at', 'returned_at')
                     ->withTimestamps();
     }
+
+    public function borrowings()
+    {
+        return $this->hasMany(Borrowing::class);
+    }
 }

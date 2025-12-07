@@ -28,13 +28,21 @@ class BorrowingController extends Controller
             'user_id' => 'required|exists:users,id',
         ]);
 
-        // area para verificar disponibilidade de livro
+        // Verificar se o livro está disponível
         if (!$book->isAvailable()) {
             $currentBorrower = $book->currentBorrowing();
             return back()->withErrors([
                 'book' => "Este livro já está emprestado para {$currentBorrower->name} desde " . 
                           \Carbon\Carbon::parse($currentBorrower->pivot->borrowed_at)->format('d/m/Y H:i') . 
                           ". Aguarde a devolução para realizar um novo empréstimo."
+            ])->withInput();
+        }
+
+        // Verificar se o usuário já possui 5 empréstimos em aberto
+        $user = User::findOrFail($request->user_id);
+        if($user->borrowings()->whereNull('returned_at')->count() >= 5) {
+            return back()->withErrors([
+                'user' => "O usuário selecionado já possui 5 livros emprestados. Ele deve devolver algum livro antes de pegar outro."
             ])->withInput();
         }
 
