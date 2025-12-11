@@ -11,7 +11,7 @@ class AdminUserSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'admin@example.com'],
+            ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Admin',
                 'password' => Hash::make('password'),
@@ -21,7 +21,7 @@ class AdminUserSeeder extends Seeder
         
         // Criar bibliotecario de teste
         User::updateOrCreate(
-            ['email' => 'bibliotecario@example.com'],
+            ['email' => 'bibliotecario@gmail.com'],
             [
                 'name' => 'Bibliotecario',
                 'password' => Hash::make('password'),
@@ -31,7 +31,7 @@ class AdminUserSeeder extends Seeder
         
         // Criar cliente de teste
         User::updateOrCreate(
-            ['email' => 'cliente@example.com'],
+            ['email' => 'cliente@gmail.com'],
             [
                 'name' => 'Cliente',
                 'password' => Hash::make('password'),

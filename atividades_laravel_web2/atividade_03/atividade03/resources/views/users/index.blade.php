@@ -2,7 +2,14 @@
 
 @section('content')
 <div class="container">
-    <h1 class="my-4">Lista de Usuários</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Lista de Usuários</h1>
+        @can('create', App\Models\User::class)
+            <a href="{{ route('users.debits') }}" class="btn btn-warning">
+                <i class="bi bi-cash-coin"></i> Usuários com Débitos
+            </a>
+        @endcan
+    </div>
 
     <table class="table table-striped">
         <thead>

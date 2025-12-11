@@ -69,6 +69,12 @@
             </div>
         @endif
 
+        @if($errors->has('user'))
+            <div class="alert alert-danger">
+                {{ $errors->first('user') }}
+            </div>
+        @endif
+
         @if($book->isAvailable())
             <form action="{{ route('books.borrow', $book) }}" method="POST">
                 @csrf

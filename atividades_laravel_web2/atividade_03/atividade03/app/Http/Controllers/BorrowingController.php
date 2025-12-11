@@ -46,6 +46,13 @@ class BorrowingController extends Controller
             ])->withInput();
         }
 
+        // Verificar se o usuário possui débitos pendentes
+        if($user->debit > 0) {
+            return back()->withErrors([
+                'user' => "O usuário possui débito de R$ " . number_format($user->debit, 2, ',', '.') . ". O débito deve ser quitado antes de realizar novos empréstimos."
+            ])->withInput();
+        }
+
         Borrowing::create([
             'user_id' => $request->user_id,
             'book_id' => $book->id,
@@ -79,11 +86,37 @@ class BorrowingController extends Controller
 
     public function returnBook(Borrowing $borrowing)
     {
+        $returnedAt = now();
+        $borrowedAt = \Carbon\Carbon::parse($borrowing->borrowed_at);
+        $daysLate = 0;
+        $fine = 0;
+
+        // Calcular dias de atraso (prazo é de 15 dias)
+        $dueDate = $borrowedAt->copy()->addDays(15);
+        
+        // Corrigido: verificar se retornou DEPOIS do prazo
+        if ($returnedAt->greaterThan($dueDate)) {
+            // Calcular quantos dias passou do prazo
+            $daysLate = $dueDate->diffInDays($returnedAt); // ordem correta: prazo -> data atual
+            $fine = $daysLate * 0.50; // R$ 0,50 por dia de atraso
+
+            // Adicionar multa ao débito do usuário
+            $user = $borrowing->user;
+            $user->debit += $fine;
+            $user->save();
+        }
+
         $borrowing->update([
-            'returned_at' => now(),
+            'returned_at' => $returnedAt,
         ]);
 
-        return redirect()->route('books.show', $borrowing->book_id)->with('success', 'Devolução registrada com sucesso.');
+        // Redirecionar de volta para a página anterior
+        if ($fine > 0) {
+            return redirect()->back()
+                ->with('warning', "Devolução registrada com {$daysLate} dia(s) de atraso. Multa de R$ " . number_format($fine, 2, ',', '.') . " adicionada ao débito do usuário.");
+        }
+
+        return redirect()->back()->with('success', 'Devolução registrada com sucesso.');
     }
 
     public function userBorrowings(User $user)

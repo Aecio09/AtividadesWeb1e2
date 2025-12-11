@@ -4,12 +4,46 @@
 <div class="container">
     <h1 class="my-4">Detalhes do Usuário</h1>
 
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    @if(session('warning'))
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ session('warning') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     <div class="card">
         <div class="card-header">
             {{ $user->name }}
         </div>
         <div class="card-body">
             <p><strong>Email:</strong> {{ $user->email }}</p>
+            <p><strong>Papel:</strong> 
+                <span class="badge bg-secondary">{{ ucfirst($user->role ?? 'cliente') }}</span>
+            </p>
+            <p><strong>Débito:</strong> 
+                @if($user->debit > 0)
+                    <span class="badge bg-danger">R$ {{ number_format($user->debit, 2, ',', '.') }}</span>
+                    @can('update', $user)
+                        <form action="{{ route('users.clearDebit', $user) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="btn btn-success btn-sm ms-2" 
+                                    onclick="return confirm('Confirma a quitação do débito?')">
+                                <i class="bi bi-check-circle"></i> Quitar
+                            </button>
+                        </form>
+                    @endcan
+                @else
+                    <span class="badge bg-success">Sem débitos</span>
+                @endif
+            </p>
         </div>
     </div>
 
@@ -39,8 +73,14 @@
                     {{ $book->title }}
                 </a>
             </td>
-            <td>{{ $book->pivot->borrowed_at }}</td>
-            <td>{{ $book->pivot->returned_at ?? 'Em Aberto' }}</td>
+            <td>{{ \Carbon\Carbon::parse($book->pivot->borrowed_at)->format('d/m/Y H:i') }}</td>
+            <td>
+                @if($book->pivot->returned_at)
+                    {{ \Carbon\Carbon::parse($book->pivot->returned_at)->format('d/m/Y H:i') }}
+                @else
+                    <span class="badge bg-warning text-dark">Em Aberto</span>
+                @endif
+            </td>
             <td>
                 @if(is_null($book->pivot->returned_at))
                     <form action="{{ route('borrowings.return', $book->pivot->id) }}" method="POST">

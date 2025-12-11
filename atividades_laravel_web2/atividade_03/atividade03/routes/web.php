@@ -32,4 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/books/{book}/borrow', [BorrowingController::class, 'store'])->name('books.borrow');
     Route::get('/users/{user}/borrowings', [BorrowingController::class, 'userBorrowings'])->name('users.borrowings');
     Route::patch('/borrowings/{borrowing}/return', [BorrowingController::class, 'returnBook'])->name('borrowings.return');
+    
+    // Rotas de débitos
+    Route::get('/users-debits', [App\Http\Controllers\UserController::class, 'debits'])->name('users.debits');
+    Route::patch('/users/{user}/clear-debit', [App\Http\Controllers\UserController::class, 'clearDebit'])->name('users.clearDebit');
 });
